@@ -1,0 +1,33 @@
+{
+    "name": "tradera-api-client",
+    "version": "0.1.0",
+    "description": "A Node.js module that lets you query Tradera through their API",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "format": "prettier --write \"src/**/*.ts\"",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ekdennisek/tradera-api-client.git"
+    },
+    "keywords": [
+        "tradera"
+    ],
+    "author": "Dennis Ek",
+    "license": "LGPL-3.0-only",
+    "bugs": {
+        "url": "https://github.com/ekdennisek/tradera-api-client/issues"
+    },
+    "homepage": "https://github.com/ekdennisek/tradera-api-client#readme",
+    "devDependencies": {
+        "prettier": "^2.2.1",
+        "tslint": "^6.1.3",
+        "tslint-config-prettier": "^1.18.0",
+        "typescript": "^4.1.3"
+    },
+    "dependencies": {
+        "soap": "^0.36.0"
+    }
+}
