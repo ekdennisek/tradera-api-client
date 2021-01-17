@@ -19,7 +19,7 @@
         "tradera"
     ],
     "license": "LGPL-3.0-only",
-    "main": "index.js",
+    "main": "lib/index.js",
     "name": "tradera-api-client",
     "repository": {
         "type": "git",
@@ -28,7 +28,13 @@
     "scripts": {
         "build": "tsc",
         "format": "prettier --write \"src/**/*.ts\"",
-        "lint": "tslint -p tsconfig.json"
+        "lint": "tslint -p tsconfig.json",
+        "postversion" : "git push && git push --tags",
+        "prepage": "npm run build",
+        "prepublishOnly": "npm run lint",
+        "preversion": "npm run lint",
+        "version" : "npm run format && git add -A src"
     },
+    "types": "lib/index.d.ts",
     "version": "0.1.0"
 }
