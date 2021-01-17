@@ -1,6 +1,6 @@
 # Tradera API client
 
-This package enables a user to use the official Tradera API from withing their JavaScript/TypeScript projects. **At the moment, only a subset of the *PublicService* has been implmented**.
+This package enables a user to use the official Tradera API from withing their JavaScript/TypeScript projects. **At the moment, only a subset of the *PublicService* has been implemented**.
 
 ## Installation
 
