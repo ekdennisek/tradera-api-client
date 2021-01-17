@@ -6,7 +6,11 @@ export class PublicService extends Service {
     }
 
     public async GetSearchResultAdvanced(filter?: GetSearchResultAdvancedRequest) {
-        return this.callApiMethod<GetSearchResultAdvancedResult>("GetSearchResultAdvanced", "GetSearchResultAdvancedResult", filter);
+        return this.callApiMethod<GetSearchResultAdvancedResult>(
+            "GetSearchResultAdvanced",
+            "GetSearchResultAdvancedResult",
+            filter,
+        );
     }
 }
 
@@ -105,9 +109,9 @@ type GetSearchResultAdvancedResult = {
             City: string;
             CountryName: string;
             TransactionId: number;
-        }
+        };
     }>;
-}
+};
 
 type GetSearchResultAdvancedRequest = {
     query: {
@@ -122,7 +126,12 @@ type GetSearchResultAdvancedRequest = {
         ZipCode?: string;
         CountyId?: number;
         Alias?: string;
-        OrderBy?: "EndDateAscending" | "EndDateDescending" | "PriceAscending" | "PriceDescending" | "BidsDescending";
+        OrderBy?:
+            | "EndDateAscending"
+            | "EndDateDescending"
+            | "PriceAscending"
+            | "PriceDescending"
+            | "BidsDescending";
         ItemStatus?: "Active" | "Ended";
         ItemType?: "All" | "Auction" | "FixedPrice";
         OnlyAuctionsWithBuyNow?: boolean;
@@ -132,4 +141,4 @@ type GetSearchResultAdvancedRequest = {
         ItemConditon?: "All" | "OnlyNew" | "OnlySecondHand";
         SellerType?: "All" | "OnlyPrivate" | "OnlyBusiness";
     };
-}
+};

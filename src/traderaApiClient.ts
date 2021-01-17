@@ -11,15 +11,16 @@ export class TraderaApiClient {
     // public readonly restrictedService: RestrictedService;
     // public readonly searchService: SearchService;
 
-    public constructor(
-        private readonly appId: number,
-        private readonly appKey: string,
-    ) {
+    public constructor(private readonly appId: number, private readonly appKey: string) {
         this.publicService = new PublicService();
     }
 
     public async init() {
-        this.soapClient = await createClientAsync(this.wdsl(), undefined, this.publicServiceUrlWithAuth());
+        this.soapClient = await createClientAsync(
+            this.wdsl(),
+            undefined,
+            this.publicServiceUrlWithAuth(),
+        );
         this.publicService.setSoapClient(this.soapClient);
     }
 
