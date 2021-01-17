@@ -19,16 +19,16 @@ type GetOfficalTimeResult = Date;
 type GetSearchResultAdvancedResult = {
     TotalNumberOfItems: number;
     TotalNumberOfPages: number;
-    Items: Array<{
-        ShippingOptions: Array<{
+    Items: {
+        ShippingOptions: {
             ShippingOptionId: number;
             Cost: number;
             ShippingWeight: number;
             ShippingProductId: number;
-        }>;
+        }[];
         PaymentOptions: unknown; // TODO
         ImageLinks: string[];
-        Buyers: Array<{
+        Buyers: {
             Id: number;
             Alias: string;
             FirstName: string;
@@ -42,7 +42,7 @@ type GetSearchResultAdvancedResult = {
             City: string;
             CountryName: string;
             TransactionId: number;
-        }>;
+        }[];
         Status: {
             Ended: boolean;
             GotBidders: boolean;
@@ -110,7 +110,7 @@ type GetSearchResultAdvancedResult = {
             CountryName: string;
             TransactionId: number;
         };
-    }>;
+    }[];
 };
 
 type GetSearchResultAdvancedRequest = {
