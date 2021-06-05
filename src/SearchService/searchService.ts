@@ -2,11 +2,14 @@ import { Service } from "../service";
 
 export class SearchService extends Service {
     public async SearchAdvanced(request: SearchAdvancedRequest) {
-        return this.callApiMethod<SearchResult>("SearchAdvanced", "SearchAdvancedResult", request);
+        const result = await this.callApiMethod<SearchResult>("SearchAdvanced", "SearchAdvancedResult", request);
+        if (result.Errors && result.Errors.length > 0) {
+            throw new Error(result.Errors.map(error => `${error.Code}: ${error.Message}.`).join(" "));
     }
+        return result;
 }
 
-type Error = {
+type SearchError = {
     Code: string;
     Message: string;
 };
@@ -68,5 +71,5 @@ type SearchResult = {
     TotalNumberOfItems: number;
     TotalNumberOfPages: number;
     Items: SearchItem[];
-    Errors: Error[];
+    Errors: SearchError[] | undefined;
 };
