@@ -1,12 +1,27 @@
 import { Service } from "../service";
 
 export class SearchService extends Service {
+    // TODO public async Search(request)
+
     public async SearchAdvanced(request: SearchAdvancedRequest) {
-        const result = await this.callApiMethod<SearchResult>("SearchAdvanced", "SearchAdvancedResult", request);
+        const result = await this.callApiMethod<SearchResult>(
+            "SearchAdvanced",
+            "SearchAdvancedResult",
+            request,
+        );
         if (result.Errors && result.Errors.length > 0) {
-            throw new Error(result.Errors.map(error => `${error.Code}: ${error.Message}.`).join(" "));
-    }
+            throw new Error(
+                result.Errors.map(error => `${error.Code}: ${error.Message}.`).join(" "),
+            );
+        }
         return result;
+    }
+
+    // TODO public async SearchByFixedCriteria(request)
+
+    // TODO public async SearchByZipCode(request)
+
+    // TODO public async SearchCategoryCount(request)
 }
 
 type SearchError = {

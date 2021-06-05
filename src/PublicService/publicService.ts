@@ -1,14 +1,52 @@
 import { Service } from "../service";
 
 export class PublicService extends Service {
+    // TODO public async FetchToken(request)
+
+    // TODO public async GetAcceptedBidderTypes(request)
+
+    // TODO public async GetAttributeDefinitions(request)
+
+    // TODO public async GetCategories(request)
+
+    // TODO public async GetCounties(request)
+
+    // TODO public async GetExpoItemTypes(request)
+
+    // TODO public async GetFeedback(request)
+
+    // TODO public async GetFeedbackSummary(request)
+
     public async GetItem(request: GetItemRequest) {
         return this.callApiMethod<Item>("GetItem", "GetItemResult", request);
     }
+
+    // TODO public async GetItemAddedDescriptions(request)
+
+    // TODO public async GetItemFieldValues(request)
+
+    // TODO public async GetItemTypes(request)
 
     public async GetOfficalTime() {
         return this.callApiMethod<GetOfficalTimeResult>("GetOfficalTime", "GetOfficalTimeResult");
     }
 
+    /**
+     *
+     * @deprecated
+     */
+    // TODO public async GetPaymentTypes(request)
+
+    /**
+     *
+     * @deprecated
+     */
+    // TODO public async GetSearchResult(request)
+
+    /**
+     *
+     * @deprecated
+     */
     public async GetSearchResultAdvanced(filter?: GetSearchResultAdvancedRequest) {
         return this.callApiMethod<GetSearchResultAdvancedResult>(
             "GetSearchResultAdvanced",
@@ -16,11 +54,27 @@ export class PublicService extends Service {
             filter,
         );
     }
+
+    // TODO public async GetSearchResultAdvancedXml(request)
+
+    // TODO public async GetSellerItems(request)
+
+    // TODO public async GetSellerItemsQuickInfo(request)
+
+    // TODO public async GetShippingProducts(request)
+
+    /**
+     *
+     * @deprecated
+     */
+    // TODO public async GetShippingTypes(request)
+
+    // TODO public async GetUserByAlias(request)
 }
 
 type GetItemRequest = {
     itemId: number;
-}
+};
 
 type GetOfficalTimeResult = Date;
 
@@ -194,14 +248,14 @@ type Item = {
     ItemType: "Auction" | "PureBuyItNow" | "ShopItem";
     ImageId: unknown; // TODO
     NumberOfImages: number; // TODO Verify
-}
+};
 
 type ItemShipping = {
     ShippingOptionId: number;
     Cost: number;
     ShippingWeight: number; // TODO Verify
     ShippingProductId: number; // TODO Verify
-}
+};
 
 type ItemStatus = "Ended" | "GotBidders" | "GotWinner";
 
@@ -221,4 +275,4 @@ type User = {
     TransactionId: unknown; // TODO
     Login: unknown; // TODO
     Password: unknown; // TODO
-}
+};
