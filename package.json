@@ -4,6 +4,9 @@
         "url": "https://github.com/ekdennisek/tradera-api-client/issues"
     },
     "dependencies": {
+        "fp-ts": "^2.10.5",
+        "io-ts": "^2.2.16",
+        "io-ts-types": "^0.5.16",
         "soap": "^0.36.0"
     },
     "description": "A Node.js module that lets you query Tradera through their API",
@@ -38,5 +41,5 @@
         "version": "npm run format && git add -A src"
     },
     "types": "lib/index.d.ts",
-    "version": "0.3.0"
+    "version": "0.3.1"
 }

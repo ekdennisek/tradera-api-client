@@ -1,3 +1,5 @@
+import { array, boolean, keyof, number, string, type, TypeOf } from "io-ts";
+import { date } from "io-ts-types";
 import { Service } from "../service";
 
 export class SearchService extends Service {
@@ -23,11 +25,6 @@ export class SearchService extends Service {
 
     // TODO public async SearchCategoryCount(request)
 }
-
-type SearchError = {
-    Code: string;
-    Message: string;
-};
 
 type SearchAdvancedRequest = {
     request: {
@@ -65,26 +62,37 @@ type SearchAdvancedRequest = {
     };
 };
 
-type SearchItem = {
-    Id: number;
-    ShortDescription: string;
-    CategoryId: number;
-    BuyItNowPrice: number;
-    SellerId: number;
-    SellerAlias: string;
-    MaxBid: number;
-    ThumbnailLink: string;
-    SellerDsrAverage: number;
-    EndDate: Date;
-    NextBid: number;
-    HasBids: boolean;
-    IsEnded: boolean;
-    ItemType: "Auction" | "AuctionWithBuyItNow" | "PureBuyItNow" | "ShopItem";
-};
+const searchItemCodec = type({
+    Id: number,
+    ShortDescription: string,
+    CategoryId: number,
+    BuyItNowPrice: number,
+    SellerId: number,
+    SellerAlias: string,
+    MaxBid: number,
+    ThumbnailLink: string,
+    SellerDsrAverage: number,
+    EndDate: date,
+    NextBid: number,
+    HasBids: boolean,
+    IsEnded: boolean,
+    ItemType: keyof({
+        Auction: null,
+        AuctionWithBuyItNow: null,
+        PureBuyItNow: null,
+        ShopItem: null,
+    }),
+});
 
-type SearchResult = {
-    TotalNumberOfItems: number;
-    TotalNumberOfPages: number;
-    Items: SearchItem[];
-    Errors: SearchError[] | undefined;
-};
+const errorCodec = type({
+    Code: string,
+    Message: string,
+});
+
+type SearchResult = TypeOf<typeof searchResultCodec>;
+const searchResultCodec = type({
+    TotalNumberOfItems: number,
+    TotalNumberOfPages: number,
+    Items: array(searchItemCodec),
+    Errors: array(errorCodec),
+});
