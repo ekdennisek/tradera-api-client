@@ -1,3 +1,6 @@
+import { array, boolean, keyof, number, string, type, TypeOf } from "io-ts";
+import { date } from "io-ts-types";
+import { checkTypes, nullable, undefinable } from "../checkTypes";
 import { Service } from "../service";
 
 export class PublicService extends Service {
@@ -18,7 +21,8 @@ export class PublicService extends Service {
     // TODO public async GetFeedbackSummary(request)
 
     public async GetItem(request: GetItemRequest) {
-        return this.callApiMethod<Item>("GetItem", "GetItemResult", request);
+        const result = await this.callApiMethod<GetItemResult>("GetItem", "GetItemResult", request);
+        return checkTypes(result, getItemResultCodec);
     }
 
     // TODO public async GetItemAddedDescriptions(request)
@@ -205,74 +209,75 @@ type GetSearchResultAdvancedRequest = {
     };
 };
 
-type Item = {
-    Id: number;
-    VAT: number;
-    ShortDescription: string;
-    OwnReferences: string[];
-    LongDescription: string;
-    StartDate: Date;
-    EndDate: Date;
-    CategoryId: number;
-    OpeningBid: number;
-    ReservePrice: number;
-    ReservePriceReached: boolean;
-    BuyItNowPrice: number;
-    NextBid: number;
-    ShippingOptions: ItemShipping[];
-    PaymentCondition: string;
-    ShippingCondition: string;
-    AcceptsPickup: boolean;
-    PaymentOptions: unknown; // TODO
-    TotalBids: number;
-    MaxBid: number;
-    StatusId: unknown; // TODO
-    HasImage: boolean; // TODO Verify
-    ImageLinks: string[];
-    Bold: boolean;
-    Thumbnail: boolean; // TODO Verify
-    ItemLink: string;
-    ThumbnailLink: string;
-    AcceptedBuyerId: number;
-    Paypal: boolean;
-    PaymentTypeId: number;
-    TimeLeft: unknown; // TODO
-    Seller: User;
-    MaxBidder: User | null;
-    BuyerList: User[];
-    Status: ItemStatus;
-    CreationDate: Date; // TODO Verify
-    StartQuantity: number;
-    RemainingQuantity: number;
-    InternalType: unknown; // TODO
-    ItemType: "Auction" | "PureBuyItNow" | "ShopItem";
-    ImageId: unknown; // TODO
-    NumberOfImages: number; // TODO Verify
-};
-
-type ItemShipping = {
-    ShippingOptionId: number;
-    Cost: number;
-    ShippingWeight: number; // TODO Verify
-    ShippingProductId: number; // TODO Verify
-};
-
-type ItemStatus = "Ended" | "GotBidders" | "GotWinner";
-
-type User = {
-    Id: number; // TODO Verify
-    Alias: string; // TODO Verify
-    FirstName: string; // TODO Verify
-    LastName: string; // TODO Verify
-    Email: string; // TODO Verify
-    TotalRating: unknown; // TODO
-    PhoneNumber: unknown; // TODO
-    MobilePhoneNumber: unknown; // TODO
-    Address: unknown; // TODO
-    ZipCode: unknown; // TODO
-    City: unknown; // TODO
-    CountryName: unknown; // TODO
-    TransactionId: unknown; // TODO
-    Login: unknown; // TODO
-    Password: unknown; // TODO
-};
+type GetItemResult = TypeOf<typeof getItemResultCodec>;
+const getItemResultCodec = type({
+    AcceptedBuyerId: number,
+    AcceptsPickup: boolean,
+    Bold: boolean,
+    BuyItNowPrice: undefinable(number),
+    Buyers: array(type({
+        Id: number,
+        Alias: string,
+        TotalRating: number,
+    })),
+    CategoryId: number,
+    EndDate: date,
+    FeaturedItem: boolean,
+    Highlight: boolean,
+    Id: number,
+    ImageLinks: type({
+        string: array(string),
+    }),
+    ItemAttributes: type({
+        int: array(number),
+    }),
+    ItemLink: string,
+    ItemType: keyof({
+        Auction: null,
+        PureBuyItNow: null,
+        ShopItem: null,
+    }),
+    LongDescription: string,
+    MaxBid: number,
+    MaxBidder: nullable(type({
+        Id: number,
+        Alias: string,
+        TotalRating: number,
+    })),
+    NextBid: number,
+    OpeningBid: number,
+    OwnReferences: nullable(array(string)),
+    PaymentCondition: string,
+    PaymentOptions: type({
+        int: array(number),
+    }),
+    PaymentTypeId: number,
+    Paypal: boolean,
+    RemainingQuantity: number,
+    ReservePrice: undefinable(number),
+    ReservePriceReached: boolean,
+    Seller: type({
+        Id: number,
+        Alias: string,
+        TotalRating: number,
+    }),
+    ShippingCondition: string,
+    ShippingOptions: array(type({
+        ShippingOptionId: number,
+        Cost: number,
+        ShippingWeight: number,
+        ShippingProductId: number,
+    })),
+    ShortDescription: string,
+    StartDate: date,
+    StartQuantity: number,
+    Status: type({
+        Ended: boolean,
+        GotBidders: boolean,
+        GotWinner: boolean,
+    }),
+    Thumbnail: boolean,
+    ThumbnailLink: string,
+    TotalBids: number,
+    VAT: undefinable(number),
+})

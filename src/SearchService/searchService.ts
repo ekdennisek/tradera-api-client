@@ -1,12 +1,13 @@
 import { array, boolean, keyof, number, string, type, TypeOf } from "io-ts";
 import { date } from "io-ts-types";
+import { checkTypes, undefinable } from "../checkTypes";
 import { Service } from "../service";
 
 export class SearchService extends Service {
     // TODO public async Search(request)
 
     public async SearchAdvanced(request: SearchAdvancedRequest) {
-        const result = await this.callApiMethod<SearchResult>(
+        const result = await this.callApiMethod<SearchAdvancedResult>(
             "SearchAdvanced",
             "SearchAdvancedResult",
             request,
@@ -16,7 +17,7 @@ export class SearchService extends Service {
                 result.Errors.map(error => `${error.Code}: ${error.Message}.`).join(" "),
             );
         }
-        return result;
+        return checkTypes(result, searchAdvancedResultCodec);
     }
 
     // TODO public async SearchByFixedCriteria(request)
@@ -62,37 +63,32 @@ type SearchAdvancedRequest = {
     };
 };
 
-const searchItemCodec = type({
-    Id: number,
-    ShortDescription: string,
-    CategoryId: number,
-    BuyItNowPrice: number,
-    SellerId: number,
-    SellerAlias: string,
-    MaxBid: number,
-    ThumbnailLink: string,
-    SellerDsrAverage: number,
-    EndDate: date,
-    NextBid: number,
-    HasBids: boolean,
-    IsEnded: boolean,
-    ItemType: keyof({
-        Auction: null,
-        AuctionWithBuyItNow: null,
-        PureBuyItNow: null,
-        ShopItem: null,
-    }),
-});
-
-const errorCodec = type({
-    Code: string,
-    Message: string,
-});
-
-type SearchResult = TypeOf<typeof searchResultCodec>;
-const searchResultCodec = type({
+type SearchAdvancedResult = TypeOf<typeof searchAdvancedResultCodec>;
+const searchAdvancedResultCodec = type({
+    Errors: undefinable(array(type({
+        Code: string,
+        Message: string,
+    }))),
+    Items: array(type({
+        CategoryId: number,
+        EndDate: date,
+        HasBids: boolean,
+        Id: number,
+        IsEnded: boolean,
+        ItemType: keyof({
+            Auction: null,
+            AuctionWithBuyItNow: null,
+            PureBuyItNow: null,
+            ShopItem: null,
+        }),
+        MaxBid: number,
+        NextBid: number,
+        SellerAlias: string,
+        SellerDsrAverage: number,
+        SellerId: number,
+        ShortDescription: string,
+        ThumbnailLink: string,
+    })),
     TotalNumberOfItems: number,
     TotalNumberOfPages: number,
-    Items: array(searchItemCodec),
-    Errors: array(errorCodec),
 });

@@ -41,5 +41,5 @@
         "version": "npm run format && git add -A src"
     },
     "types": "lib/index.d.ts",
-    "version": "0.3.1"
+    "version": "0.3.2"
 }
