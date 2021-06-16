@@ -265,8 +265,8 @@ const getItemResultCodec = type({
     ShippingOptions: array(type({
         ShippingOptionId: number,
         Cost: number,
-        ShippingWeight: number,
-        ShippingProductId: number,
+        ShippingWeight: undefinable(number),
+        ShippingProductId: undefinable(number),
     })),
     ShortDescription: string,
     StartDate: date,
