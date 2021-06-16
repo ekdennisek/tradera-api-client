@@ -255,7 +255,7 @@ const getItemResultCodec = type({
     Paypal: boolean,
     RemainingQuantity: number,
     ReservePrice: undefinable(number),
-    ReservePriceReached: boolean,
+    ReservePriceReached: undefinable(boolean),
     Seller: type({
         Id: number,
         Alias: string,
