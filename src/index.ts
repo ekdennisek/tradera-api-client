@@ -1,1 +1,1 @@
-export { TraderaApiClient } from "./traderaApiClient";
+export { PublicService } from "./services";
