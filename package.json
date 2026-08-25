@@ -4,14 +4,17 @@
         "url": "https://github.com/ekdennisek/tradera-api-client/issues"
     },
     "dependencies": {
-        "soap": "^1.1.2",
         "zod": "^3.23.8"
     },
     "description": "A Node.js module that lets you query Tradera through their API",
     "devDependencies": {
         "@types/node": "^22.5.0",
         "prettier": "^3.3.3",
+        "tsx": "^4.19.0",
         "typescript": "^5.5.4"
+    },
+    "engines": {
+        "node": ">=18"
     },
     "files": [
         "lib/**/*"
@@ -29,8 +32,10 @@
     },
     "scripts": {
         "build": "tsc",
-        "prettier": "prettier --write \"src/**/*.ts\""
+        "prettier": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+        "test": "node --import tsx --test test/*.test.ts",
+        "test:live": "node --import tsx --test test/live/*.test.ts"
     },
     "types": "lib/index.d.ts",
-    "version": "0.4.0"
+    "version": "0.5.0"
 }
