@@ -40,5 +40,5 @@
         "test:live": "node --import tsx --test test/live/*.test.ts"
     },
     "types": "lib/index.d.ts",
-    "version": "1.0.0"
+    "version": "1.0.1"
 }
