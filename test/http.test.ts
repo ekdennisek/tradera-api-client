@@ -133,6 +133,42 @@ describe("HttpClient", () => {
         assert.equal(url.searchParams.get("minEndDate"), "2026-08-01T00:00:00.000Z");
     });
 
+    it("sends PUT and DELETE requests", async () => {
+        const userConfig = { ...credentials, userId: 555, userToken: "user-token" };
+
+        const put = fakeFetch(200, { isSuccessful: true });
+        await new TraderaClient({ ...userConfig, fetch: put.fetch }).listings.updateItemPrice(42, {
+            binPrice: 300,
+        });
+        assert.equal(put.requests[0]!.method, "PUT");
+        assert.equal(put.requests[0]!.url.pathname, "/v4/listings/items/42/price");
+        assert.deepEqual(JSON.parse(put.requests[0]!.body!), { binPrice: 300 });
+
+        const del = fakeFetch(200, true);
+        const ended = await new TraderaClient({ ...userConfig, fetch: del.fetch }).listings.endItem(
+            42,
+        );
+        assert.equal(del.requests[0]!.method, "DELETE");
+        assert.equal(del.requests[0]!.url.pathname, "/v4/listings/items/42");
+        assert.equal(ended, true);
+    });
+
+    it("joins order ids into the path and request ids into the query", async () => {
+        const userConfig = { ...credentials, userId: 555, userToken: "user-token" };
+
+        const orders = fakeFetch(200, []);
+        await new TraderaClient({ ...userConfig, fetch: orders.fetch }).orders.getOrdersByIds([
+            1, 2, 3,
+        ]);
+        assert.equal(orders.requests[0]!.url.pathname, "/v4/orders/1,2,3");
+
+        const results = fakeFetch(200, []);
+        await new TraderaClient({ ...userConfig, fetch: results.fetch }).listings.getRequestResults(
+            [7, 8],
+        );
+        assert.deepEqual(results.requests[0]!.url.searchParams.getAll("requestIds"), ["7", "8"]);
+    });
+
     it("maps error envelopes to TraderaApiError", async () => {
         const { fetch } = fakeFetch(400, {
             error: { code: "SandboxNotSupported", message: "Sandbox is not supported." },

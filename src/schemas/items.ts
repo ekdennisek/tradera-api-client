@@ -2,25 +2,23 @@ import { z } from "zod";
 
 import { attributeValuesSchema, imageLinkSchema, traderaDateSchema, userSchema } from "./common";
 
-/**
- * Item type as returned in Item.itemType and ItemQuickInfo.itemType.
- * The OpenAPI spec also allows the value 5, whose meaning is undocumented, so response
- * schemas validate itemType as a plain number.
- */
+// Item type as returned in Item.itemType and ItemQuickInfo.itemType. Names from the v3
+// WSDL ItemType enumeration; response schemas validate itemType as a plain number.
 export enum ApiItemType {
     Auction = 1,
     PureBuyItNow = 3,
     ShopItem = 4,
+    ContactOnly = 5,
 }
 
-// Names inferred from v3 semantics; the spec only gives the numeric values 0-2.
+// Names from the v3 RestrictedService WSDL enumeration (All, Active, Inactive).
 export enum ActiveFilter {
     All = 0,
     Active = 1,
-    Ended = 2,
+    Inactive = 2,
 }
 
-// Names inferred from v3 semantics; the spec only gives the numeric values 0-3.
+// Names from the v3 RestrictedService WSDL enumeration.
 export enum ItemTypeFilter {
     All = 0,
     Auction = 1,

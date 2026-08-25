@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
 
-import { TraderaClient } from "../../src";
+import { TraderaApiError, TraderaClient } from "../../src";
 
 // Live smoke test against the production v4 API (read-only endpoints only).
 // Runs only when app credentials are present:
@@ -170,6 +170,85 @@ describe(
                     const wishlist = await userClient!.buyer.getWishlist();
                     assert.ok(Array.isArray(wishlist));
                 });
+
+                it("gets seller listings data", async () => {
+                    const [items, transactions, updated] = await Promise.all([
+                        userClient!.listings.getSellerItems(),
+                        userClient!.listings.getSellerTransactions(),
+                        userClient!.listings.getUpdatedSellerItems(),
+                    ]);
+                    assert.ok(Array.isArray(items));
+                    assert.ok(Array.isArray(transactions));
+                    assert.ok(Array.isArray(updated));
+                });
+
+                it("gets seller orders", async () => {
+                    const orders = await userClient!.orders.getOrders();
+                    assert.ok(Array.isArray(orders));
+                });
+
+                it("gets shop settings (tolerating accounts without a shop)", async () => {
+                    try {
+                        const settings = await userClient!.listings.getShopSettings();
+                        assert.equal(typeof settings, "object");
+                    } catch (error) {
+                        assert.ok(error instanceof TraderaApiError, String(error));
+                        console.log(
+                            `shop-settings not available: ${error.status} ${error.message}`,
+                        );
+                    }
+                });
+
+                // The docs-sanctioned no-sandbox test path: prepare a draft listing with
+                // autoCommit: false and never commit it — it is validated but never
+                // published. Opt-in because it still creates a queued request on the
+                // account. Enable with TRADERA_LIVE_DRAFT=1.
+                it(
+                    "prepares (but never commits) a draft listing",
+                    {
+                        skip:
+                            process.env["TRADERA_LIVE_DRAFT"] !== "1" &&
+                            "TRADERA_LIVE_DRAFT not set",
+                    },
+                    async () => {
+                        const categories = await userClient!.categories.getCategories();
+                        const leafCategory =
+                            categories[0]!.childCategories?.[0]?.childCategories?.[0] ??
+                            categories[0]!.childCategories?.[0] ??
+                            categories[0]!;
+                        const draft = await userClient!.listings.addItem({
+                            title: "tradera-api-client draft test (never published)",
+                            description: "Draft created by an API client test; never committed.",
+                            categoryId: leafCategory.id,
+                            itemType: 1,
+                            duration: 14,
+                            startPrice: 10000,
+                            acceptedBidderId: 1,
+                            shippingOptions: [{ shippingOptionId: 1, cost: 79 }],
+                            itemAttributes: [2],
+                            autoCommit: false,
+                        });
+                        assert.ok(draft.requestId > 0);
+                        console.log("draft request:", JSON.stringify(draft));
+                        const results = await userClient!.listings.getRequestResults([
+                            draft.requestId,
+                        ]);
+                        console.log("request results:", JSON.stringify(results));
+                        assert.ok(Array.isArray(results));
+                        // Deliberately no commitItem call — and end the reserved item
+                        // immediately as extra cleanup, per the docs' no-sandbox guidance.
+                        // An uncommitted draft may not be endable; tolerate an API error.
+                        try {
+                            const ended = await userClient!.listings.endItem(draft.itemId);
+                            console.log("draft item ended:", ended);
+                        } catch (error) {
+                            assert.ok(error instanceof TraderaApiError, String(error));
+                            console.log(
+                                `ending draft not needed/allowed: ${error.status} ${error.message}`,
+                            );
+                        }
+                    },
+                );
             },
         );
     },

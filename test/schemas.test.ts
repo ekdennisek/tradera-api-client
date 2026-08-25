@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 
 import { buyerTransactionSchema } from "../src/schemas/buyer";
 import { categorySchema } from "../src/schemas/categories";
+import { validateCampaignCodeResultSchema } from "../src/schemas/listings";
+import { sellerOrderSchema } from "../src/schemas/orders";
 import { parseTraderaDate } from "../src/schemas/common";
 import { itemSchema } from "../src/schemas/items";
 import { officialTimeSchema } from "../src/schemas/referenceData";
@@ -80,6 +82,68 @@ describe("schemas", () => {
             totalRating: 42,
         });
         assert.equal(feedback.created.toISOString(), "2026-08-01T08:00:00.000Z");
+    });
+
+    it("parses a seller order with nested payments and items", () => {
+        const order = sellerOrderSchema.parse({
+            orderId: 10187,
+            createdDate: "2026-08-20T12:00:00",
+            expiresDate: null,
+            lastUpdatedDate: "2026-08-21T09:30:00",
+            subTotal: 250,
+            seller: { userId: 111, alias: "seller_alias" },
+            buyer: { userId: 222, firstName: "Anna", city: "Täby" },
+            shipTo: { name: "Anna A", addressLine1: "Gatan 1", zipCode: "18300", city: "Täby" },
+            items: [
+                {
+                    itemId: 745031047,
+                    type: 1,
+                    title: "Vas",
+                    quantity: 1,
+                    unitPrice: 250,
+                    vatRate: 0,
+                    ownReferences: [],
+                    merchantPartNumber: null,
+                },
+            ],
+            sellerOrderPayments: [
+                {
+                    paymentType: "TraderaDirectPayment",
+                    reference: "abc",
+                    additionalInfo: [{ key: "k", value: "v" }],
+                    amount: 309,
+                    paidDate: "2026-08-20T12:05:00",
+                    paymentCost: 0,
+                },
+            ],
+            shippingType: "PostNord",
+            shippingCost: 59,
+            shippingWeight: 2,
+            purchaseOrderId: "PO-1",
+        });
+        assert.equal(order.createdDate.toISOString(), "2026-08-20T10:00:00.000Z");
+        assert.equal(order.items?.[0]?.title, "Vas");
+        assert.equal(order.sellerOrderPayments?.[0]?.amount, 309);
+    });
+
+    it("parses a campaign code validation result", () => {
+        const result = validateCampaignCodeResultSchema.parse({
+            isValid: false,
+            isInvalidBecauseDoesNotExist: true,
+            isInvalidBecauseHasNotStarted: false,
+            isInvalidBecauseHasEnded: false,
+            isInvalidBecauseCategoryIsNotAllowed: false,
+            isInvalidBecauseAlreadyUsed: false,
+            isInvalidBecauseUserIsNotAllowed: false,
+            description: null,
+            discountFactor: null,
+            provisionFactor: null,
+            maxFeeCap: null,
+            isCustomLengthFeeFree: false,
+            isUnsoldFeeFree: false,
+        });
+        assert.equal(result.isValid, false);
+        assert.equal(result.isInvalidBecauseDoesNotExist, true);
     });
 
     it("parses a buyer transaction with date coercion", () => {

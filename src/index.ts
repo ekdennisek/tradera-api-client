@@ -9,6 +9,11 @@ export type {
     GetWishlistOptions,
 } from "./resources/buyer";
 export type { GetSellerItemsOptions, GetSellerItemsQuickInfoOptions } from "./resources/items";
+export type {
+    GetListingsSellerItemsOptions,
+    GetSellerTransactionsOptions,
+} from "./resources/listings";
+export type { GetOrdersOptions } from "./resources/orders";
 export type { GetShippingOptionsOptions } from "./resources/referenceData";
 export type { SearchOptions } from "./resources/search";
 export type { GetFeedbackOptions } from "./resources/users";
@@ -51,6 +56,53 @@ export type {
 } from "./schemas/referenceData";
 export { BuyStatus } from "./schemas/buyer";
 export type { BuyResult, BuyerTransaction, TransactionItem } from "./schemas/buyer";
+export { FeedbackType, ImageFormat, ResultCode, TransactionFilter } from "./schemas/listings";
+export type {
+    AddItemImageRequest,
+    ItemAttributeValues,
+    ItemImageData,
+    ItemRequest,
+    ItemShippingInput,
+    LeaveFeedbackRequest,
+    NumberValues,
+    QueuedRequestResponse,
+    RequestResult,
+    RestartItemResult,
+    SellerTransaction,
+    SetActivateDateOnShopItemsResult,
+    SetActivateDateShopItem,
+    SetPriceOnShopItemsResult,
+    SetPriceShopItem,
+    SetPricesNonShopItem,
+    SetPricesOnNonShopItemsResult,
+    SetQuantityOnShopItemsResult,
+    SetQuantityShopItem,
+    ShopItemData,
+    ShopItemVariantData,
+    ShopLogoData,
+    ShopSettings,
+    ShopSettingsUpdate,
+    TermValues,
+    TransactionStatusUpdateData,
+    UpdateItemPriceRequest,
+    UpdateItemPriceResult,
+    UpdatedItemInfo,
+    ValidateCampaignCodeRequest,
+    ValidateCampaignCodeResult,
+    VariantAttribute,
+    VariantData,
+} from "./schemas/listings";
+export { SellerOrderQueryDateMode } from "./schemas/orders";
+export type {
+    FreightLabel,
+    SellerOrder,
+    SellerOrderAddress,
+    SellerOrderItem,
+    SellerOrderPayment,
+    SellerOrderUser,
+    SetSellerOrderAsShippedResponse,
+    ShippingCode,
+} from "./schemas/orders";
 export { FeedbackRating, FeedbackRole, GetFeedbackRole } from "./schemas/users";
 export type {
     DetailedSellerRating,

@@ -40,6 +40,14 @@ export class HttpClient {
         return this.request("POST", path, options);
     }
 
+    put<T = void>(path: string, options: RequestOptions<T>): Promise<T> {
+        return this.request("PUT", path, options);
+    }
+
+    delete<T = void>(path: string, options: RequestOptions<T>): Promise<T> {
+        return this.request("DELETE", path, options);
+    }
+
     private async request<T>(method: string, path: string, options: RequestOptions<T>): Promise<T> {
         const url = new URL(path, this.config.baseUrl);
         for (const [key, value] of Object.entries(options.query ?? {})) {
