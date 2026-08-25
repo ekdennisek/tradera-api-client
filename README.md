@@ -2,7 +2,7 @@
 
 A Node.js client for the official [Tradera REST API (v4)](https://api.tradera.com/documentation), written in TypeScript. All responses are validated at runtime with [zod](https://github.com/colinhacks/zod).
 
-> **Beta:** both the Tradera v4 API and this package (0.5.0) are in beta. The API's endpoints and response shapes may change without notice. Versions ≤ 0.4.0 of this package used the v3 SOAP API.
+> **Beta:** the Tradera v4 API is in beta. The API's endpoints and response shapes may change without notice.
 
 ## Requirements
 
@@ -37,74 +37,74 @@ const client = new TraderaClient(); // credentials from env vars
 
 ### Available methods
 
-| Method                                                   | Endpoint                                                |
-| -------------------------------------------------------- | ------------------------------------------------------- |
-| `client.auth.fetchToken({ userId, secretKey })`          | `POST /v4/auth/token`                                   |
-| `client.auth.beginBankId()`                              | `POST /v4/auth/bankid/begin`                            |
-| `client.auth.beginBankIdOnFile()`                        | `POST /v4/auth/bankid/begin-on-file`                    |
-| `client.auth.getBankIdProgress(orderRef)`                | `GET /v4/auth/bankid/progress`                          |
-| `client.auth.cancelBankId(orderRef)`                     | `POST /v4/auth/bankid/cancel`                           |
-| `client.buyer.buy(request)` †                            | `POST /v4/buyer/buy`                                    |
-| `client.buyer.getTransactions(options?)` †               | `GET /v4/buyer/transactions`                            |
-| `client.buyer.getWishlist(options?)` †                   | `GET /v4/buyer/wishlist`                                |
-| `client.items.getItem(itemId)`                           | `GET /v4/items/{itemId}`                                |
-| `client.items.getItemDescriptions(itemId)`               | `GET /v4/items/{itemId}/descriptions`                   |
-| `client.items.getItemRestarts(itemId)`                   | `GET /v4/items/{itemId}/restarts`                       |
-| `client.items.getSellerItems(userId, options?)`          | `GET /v4/items/seller/{userId}`                         |
-| `client.items.getSellerItemsQuickInfo(userId, options?)` | `GET /v4/items/seller/{userId}/quick-info`              |
-| `client.categories.getCategories()`                      | `GET /v4/categories`                                    |
-| `client.categories.getAttributeDefinitions(categoryId)`  | `GET /v4/categories/{categoryId}/attribute-definitions` |
-| `client.listings.addItem(request)` †                     | `POST /v4/listings/items`                               |
-| `client.listings.addItemXml(xml)` †                      | `POST /v4/listings/items/xml`                           |
-| `client.listings.addItemImage(requestId, request)` †     | `POST /v4/listings/items/{requestId}/images`            |
-| `client.listings.addItemCampaignCode(requestId, code)` † | `POST /v4/listings/items/{requestId}/campaign-code`     |
-| `client.listings.commitItem(requestId)` †                | `POST /v4/listings/items/{requestId}/commit`            |
-| `client.listings.getItem(itemId)` †                      | `GET /v4/listings/items/{itemId}`                       |
-| `client.listings.endItem(itemId)` †                      | `DELETE /v4/listings/items/{itemId}`                    |
-| `client.listings.restartItem(itemId)` †                  | `POST /v4/listings/items/{itemId}/restart`              |
-| `client.listings.setPricesOnNonShopItem(request)` †      | `PUT /v4/listings/items/prices`                         |
-| `client.listings.updateItemPrice(itemId, request)` †     | `PUT /v4/listings/items/{itemId}/price`                 |
-| `client.listings.getSellerItems(options?)` †             | `GET /v4/listings/seller-items`                         |
-| `client.listings.getUpdatedSellerItems(rowVersion?)` †   | `GET /v4/listings/updated-seller-items`                 |
-| `client.listings.getSellerTransactions(options?)` †      | `GET /v4/listings/seller-transactions`                  |
-| `client.listings.getRequestResults(requestIds)` †        | `GET /v4/listings/request-results`                      |
-| `client.listings.addShopItem(data)` †                    | `POST /v4/listings/shop-items`                          |
-| `client.listings.updateShopItem(itemId, data)` †         | `PUT /v4/listings/shop-items`                           |
-| `client.listings.addShopItemVariant(data)` †             | `POST /v4/listings/shop-items/variant`                  |
-| `client.listings.updateShopItemVariant(itemId, data)` †  | `PUT /v4/listings/shop-items/variant`                   |
-| `client.listings.removeShopItem(itemId)` †               | `DELETE /v4/listings/shop-items/{itemId}`               |
-| `client.listings.setShopItemPrices(items)` †             | `PUT /v4/listings/shop-items/prices`                    |
-| `client.listings.setShopItemQuantities(items)` †         | `PUT /v4/listings/shop-items/quantities`                |
-| `client.listings.setShopItemActivateDates(items)` †      | `PUT /v4/listings/shop-items/activate-dates`            |
-| `client.listings.getShopSettings()` †                    | `GET /v4/listings/shop-settings`                        |
-| `client.listings.updateShopSettings(settings)` †         | `PUT /v4/listings/shop-settings`                        |
-| `client.listings.leaveFeedback(transactionId, request)` † | `POST /v4/listings/feedback/transaction/{transactionId}` |
-| `client.listings.leaveOrderFeedback(orderNumber, request)` † | `POST /v4/listings/feedback/order/{orderNumber}`    |
-| `client.listings.validateCampaignCode(request)` †        | `POST /v4/listings/validate-campaign-code`              |
-| `client.listings.updateTransactionStatus(data)` †        | `PUT /v4/listings/transaction-status`                   |
-| `client.orders.getOrders(options?)` †                    | `GET /v4/orders`                                        |
-| `client.orders.getOrdersByIds(orderIds)` †               | `GET /v4/orders/{orderIds}`                             |
-| `client.orders.shipOrder(orderId)` †                     | `POST /v4/orders/{orderId}/ship`                        |
-| `client.orders.getFreightLabels(orderIds)` †             | `GET /v4/orders/{orderIds}/freight-labels`              |
-| `client.orders.getShippingCodes(orderIds)` †             | `GET /v4/orders/{orderIds}/shipping-codes`              |
-| `client.referenceData.getOfficialTime()`                 | `GET /v4/reference-data/time`                           |
-| `client.referenceData.getAcceptedBidderTypes()`          | `GET /v4/reference-data/accepted-bidder-types`          |
-| `client.referenceData.getExpoItemTypes()`                | `GET /v4/reference-data/expo-item-types`                |
-| `client.referenceData.getItemTypes()`                    | `GET /v4/reference-data/item-types`                     |
-| `client.referenceData.getCounties()`                     | `GET /v4/reference-data/counties`                       |
-| `client.referenceData.getItemFieldValues()`              | `GET /v4/reference-data/item-field-values`              |
-| `client.referenceData.getShippingOptions(options?)`      | `GET /v4/reference-data/shipping-options`               |
-| `client.users.getUserByAlias(alias)`                     | `GET /v4/users/by-alias/{alias}`                        |
-| `client.users.getFeedback(userId, options?)`             | `GET /v4/users/{userId}/feedback`                       |
-| `client.users.getFeedbackSummary(userId)`                | `GET /v4/users/{userId}/feedback/summary`               |
-| `client.users.getMe()` †                                 | `GET /v4/users/me`                                      |
-| `client.users.getMyPaymentOptions()` †                   | `GET /v4/users/me/payment-options`                      |
-| `client.users.getSellerInfo(userId)` †                   | `GET /v4/users/{userId}/seller-info`                    |
-| `client.search.search(query, options?)`                  | `GET /v4/search`                                        |
-| `client.search.searchAdvanced(request)`                  | `POST /v4/search/advanced`                              |
-| `client.search.getCategoryCount(request)`                | `POST /v4/search/category-count`                        |
-| `client.search.searchByZipCode(request)`                 | `POST /v4/search/by-zip-code`                           |
-| `client.search.searchByFixedCriteria(request)`           | `POST /v4/search/by-fixed-criteria`                     |
+| Method                                                       | Endpoint                                                 |
+| ------------------------------------------------------------ | -------------------------------------------------------- |
+| `client.auth.fetchToken({ userId, secretKey })`              | `POST /v4/auth/token`                                    |
+| `client.auth.beginBankId()`                                  | `POST /v4/auth/bankid/begin`                             |
+| `client.auth.beginBankIdOnFile()`                            | `POST /v4/auth/bankid/begin-on-file`                     |
+| `client.auth.getBankIdProgress(orderRef)`                    | `GET /v4/auth/bankid/progress`                           |
+| `client.auth.cancelBankId(orderRef)`                         | `POST /v4/auth/bankid/cancel`                            |
+| `client.buyer.buy(request)` †                                | `POST /v4/buyer/buy`                                     |
+| `client.buyer.getTransactions(options?)` †                   | `GET /v4/buyer/transactions`                             |
+| `client.buyer.getWishlist(options?)` †                       | `GET /v4/buyer/wishlist`                                 |
+| `client.items.getItem(itemId)`                               | `GET /v4/items/{itemId}`                                 |
+| `client.items.getItemDescriptions(itemId)`                   | `GET /v4/items/{itemId}/descriptions`                    |
+| `client.items.getItemRestarts(itemId)`                       | `GET /v4/items/{itemId}/restarts`                        |
+| `client.items.getSellerItems(userId, options?)`              | `GET /v4/items/seller/{userId}`                          |
+| `client.items.getSellerItemsQuickInfo(userId, options?)`     | `GET /v4/items/seller/{userId}/quick-info`               |
+| `client.categories.getCategories()`                          | `GET /v4/categories`                                     |
+| `client.categories.getAttributeDefinitions(categoryId)`      | `GET /v4/categories/{categoryId}/attribute-definitions`  |
+| `client.listings.addItem(request)` †                         | `POST /v4/listings/items`                                |
+| `client.listings.addItemXml(xml)` †                          | `POST /v4/listings/items/xml`                            |
+| `client.listings.addItemImage(requestId, request)` †         | `POST /v4/listings/items/{requestId}/images`             |
+| `client.listings.addItemCampaignCode(requestId, code)` †     | `POST /v4/listings/items/{requestId}/campaign-code`      |
+| `client.listings.commitItem(requestId)` †                    | `POST /v4/listings/items/{requestId}/commit`             |
+| `client.listings.getItem(itemId)` †                          | `GET /v4/listings/items/{itemId}`                        |
+| `client.listings.endItem(itemId)` †                          | `DELETE /v4/listings/items/{itemId}`                     |
+| `client.listings.restartItem(itemId)` †                      | `POST /v4/listings/items/{itemId}/restart`               |
+| `client.listings.setPricesOnNonShopItem(request)` †          | `PUT /v4/listings/items/prices`                          |
+| `client.listings.updateItemPrice(itemId, request)` †         | `PUT /v4/listings/items/{itemId}/price`                  |
+| `client.listings.getSellerItems(options?)` †                 | `GET /v4/listings/seller-items`                          |
+| `client.listings.getUpdatedSellerItems(rowVersion?)` †       | `GET /v4/listings/updated-seller-items`                  |
+| `client.listings.getSellerTransactions(options?)` †          | `GET /v4/listings/seller-transactions`                   |
+| `client.listings.getRequestResults(requestIds)` †            | `GET /v4/listings/request-results`                       |
+| `client.listings.addShopItem(data)` †                        | `POST /v4/listings/shop-items`                           |
+| `client.listings.updateShopItem(itemId, data)` †             | `PUT /v4/listings/shop-items`                            |
+| `client.listings.addShopItemVariant(data)` †                 | `POST /v4/listings/shop-items/variant`                   |
+| `client.listings.updateShopItemVariant(itemId, data)` †      | `PUT /v4/listings/shop-items/variant`                    |
+| `client.listings.removeShopItem(itemId)` †                   | `DELETE /v4/listings/shop-items/{itemId}`                |
+| `client.listings.setShopItemPrices(items)` †                 | `PUT /v4/listings/shop-items/prices`                     |
+| `client.listings.setShopItemQuantities(items)` †             | `PUT /v4/listings/shop-items/quantities`                 |
+| `client.listings.setShopItemActivateDates(items)` †          | `PUT /v4/listings/shop-items/activate-dates`             |
+| `client.listings.getShopSettings()` †                        | `GET /v4/listings/shop-settings`                         |
+| `client.listings.updateShopSettings(settings)` †             | `PUT /v4/listings/shop-settings`                         |
+| `client.listings.leaveFeedback(transactionId, request)` †    | `POST /v4/listings/feedback/transaction/{transactionId}` |
+| `client.listings.leaveOrderFeedback(orderNumber, request)` † | `POST /v4/listings/feedback/order/{orderNumber}`         |
+| `client.listings.validateCampaignCode(request)` †            | `POST /v4/listings/validate-campaign-code`               |
+| `client.listings.updateTransactionStatus(data)` †            | `PUT /v4/listings/transaction-status`                    |
+| `client.orders.getOrders(options?)` †                        | `GET /v4/orders`                                         |
+| `client.orders.getOrdersByIds(orderIds)` †                   | `GET /v4/orders/{orderIds}`                              |
+| `client.orders.shipOrder(orderId)` †                         | `POST /v4/orders/{orderId}/ship`                         |
+| `client.orders.getFreightLabels(orderIds)` †                 | `GET /v4/orders/{orderIds}/freight-labels`               |
+| `client.orders.getShippingCodes(orderIds)` †                 | `GET /v4/orders/{orderIds}/shipping-codes`               |
+| `client.referenceData.getOfficialTime()`                     | `GET /v4/reference-data/time`                            |
+| `client.referenceData.getAcceptedBidderTypes()`              | `GET /v4/reference-data/accepted-bidder-types`           |
+| `client.referenceData.getExpoItemTypes()`                    | `GET /v4/reference-data/expo-item-types`                 |
+| `client.referenceData.getItemTypes()`                        | `GET /v4/reference-data/item-types`                      |
+| `client.referenceData.getCounties()`                         | `GET /v4/reference-data/counties`                        |
+| `client.referenceData.getItemFieldValues()`                  | `GET /v4/reference-data/item-field-values`               |
+| `client.referenceData.getShippingOptions(options?)`          | `GET /v4/reference-data/shipping-options`                |
+| `client.users.getUserByAlias(alias)`                         | `GET /v4/users/by-alias/{alias}`                         |
+| `client.users.getFeedback(userId, options?)`                 | `GET /v4/users/{userId}/feedback`                        |
+| `client.users.getFeedbackSummary(userId)`                    | `GET /v4/users/{userId}/feedback/summary`                |
+| `client.users.getMe()` †                                     | `GET /v4/users/me`                                       |
+| `client.users.getMyPaymentOptions()` †                       | `GET /v4/users/me/payment-options`                       |
+| `client.users.getSellerInfo(userId)` †                       | `GET /v4/users/{userId}/seller-info`                     |
+| `client.search.search(query, options?)`                      | `GET /v4/search`                                         |
+| `client.search.searchAdvanced(request)`                      | `POST /v4/search/advanced`                               |
+| `client.search.getCategoryCount(request)`                    | `POST /v4/search/category-count`                         |
+| `client.search.searchByZipCode(request)`                     | `POST /v4/search/by-zip-code`                            |
+| `client.search.searchByFixedCriteria(request)`               | `POST /v4/search/by-fixed-criteria`                      |
 
 ### User authorization
 
