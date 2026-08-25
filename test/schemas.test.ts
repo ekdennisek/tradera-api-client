@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { buyerTransactionSchema } from "../src/schemas/buyer";
 import { categorySchema } from "../src/schemas/categories";
 import { parseTraderaDate } from "../src/schemas/common";
 import { itemSchema } from "../src/schemas/items";
@@ -79,6 +80,26 @@ describe("schemas", () => {
             totalRating: 42,
         });
         assert.equal(feedback.created.toISOString(), "2026-08-01T08:00:00.000Z");
+    });
+
+    it("parses a buyer transaction with date coercion", () => {
+        const transaction = buyerTransactionSchema.parse({
+            id: 1,
+            date: "2026-08-20T12:00:00",
+            amount: 250,
+            lastUpdatedDate: "2026-08-21T09:30:00",
+            isMarkedAsPaidConfirmed: true,
+            isMarkedAsShipped: false,
+            isShippingBooked: false,
+            isFeedbackLeftBySeller: false,
+            isFeedbackLeftByBuyer: true,
+            buyer: null,
+            seller: { id: 111, alias: "seller_alias" },
+            item: { id: 745031047, type: 1, title: "Vas", ownReferences: [] },
+            isMarkedAsPaid: true,
+        });
+        assert.equal(transaction.date.toISOString(), "2026-08-20T10:00:00.000Z");
+        assert.equal(transaction.item?.title, "Vas");
     });
 
     it("parses a search result with nullable numeric fields", () => {

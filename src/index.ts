@@ -3,6 +3,11 @@ export type { TraderaClientConfig } from "./config";
 export { TraderaApiError } from "./error";
 
 export type { FetchTokenRequest } from "./resources/auth";
+export type {
+    BuyRequest,
+    GetBuyerTransactionsOptions,
+    GetWishlistOptions,
+} from "./resources/buyer";
 export type { GetSellerItemsOptions, GetSellerItemsQuickInfoOptions } from "./resources/items";
 export type { GetShippingOptionsOptions } from "./resources/referenceData";
 export type { SearchOptions } from "./resources/search";
@@ -44,8 +49,19 @@ export type {
     ShippingProduct,
     ShippingTermsAndConditions,
 } from "./schemas/referenceData";
+export { BuyStatus } from "./schemas/buyer";
+export type { BuyResult, BuyerTransaction, TransactionItem } from "./schemas/buyer";
 export { FeedbackRating, FeedbackRole, GetFeedbackRole } from "./schemas/users";
-export type { Feedback, FeedbackSummary, FeedbackSummaryItem } from "./schemas/users";
+export type {
+    DetailedSellerRating,
+    Feedback,
+    FeedbackSummary,
+    FeedbackSummaryItem,
+    MemberPaymentOption,
+    MemberPaymentOptionsResult,
+    SellerInfo,
+    UserInfo,
+} from "./schemas/users";
 export type {
     AttributeFilter,
     CategoryCountRequest,

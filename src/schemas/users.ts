@@ -46,3 +46,54 @@ export const feedbackSummarySchema = z.object({
     lastTwelveMonth: feedbackSummaryItemSchema.nullish(),
 });
 export type FeedbackSummary = z.infer<typeof feedbackSummarySchema>;
+
+export const userInfoSchema = z.object({
+    id: z.number(),
+    alias: z.string().nullish(),
+    firstName: z.string().nullish(),
+    lastName: z.string().nullish(),
+    email: z.string().nullish(),
+    phoneNumber: z.string().nullish(),
+    address: z.string().nullish(),
+    zipCode: z.string().nullish(),
+    city: z.string().nullish(),
+    countryName: z.string().nullish(),
+    personalNumber: z.string().nullish(),
+    currencyCode: z.string().nullish(),
+    languageCodeIso2: z.string().nullish(),
+});
+export type UserInfo = z.infer<typeof userInfoSchema>;
+
+export const memberPaymentOptionSchema = z.object({
+    name: z.string().nullish(),
+    description: z.string().nullish(),
+    displayName: z.string().nullish(),
+});
+export type MemberPaymentOption = z.infer<typeof memberPaymentOptionSchema>;
+
+export const memberPaymentOptionsResultSchema = z.object({
+    paymentOptions: z.array(memberPaymentOptionSchema).nullish(),
+});
+export type MemberPaymentOptionsResult = z.infer<typeof memberPaymentOptionsResultSchema>;
+
+export const detailedSellerRatingSchema = z.object({
+    itemAsDescribedCount: z.number().nullish(),
+    itemAsDescribedAverage: z.number().nullish(),
+    commResponsivenessCount: z.number().nullish(),
+    commResponsivenessAverage: z.number().nullish(),
+    shippingTimeCount: z.number().nullish(),
+    shippingTimeAverage: z.number().nullish(),
+    shippingHandlingChargesCount: z.number().nullish(),
+    shippingHandlingChargesAverage: z.number().nullish(),
+});
+export type DetailedSellerRating = z.infer<typeof detailedSellerRatingSchema>;
+
+export const sellerInfoSchema = z.object({
+    detailedSellerRating: detailedSellerRatingSchema.nullish(),
+    totalRating: z.number(),
+    positiveFeedbackPercent: z.number().nullish(),
+    personalMessage: z.string().nullish(),
+    isCompany: z.boolean(),
+    hasShop: z.boolean(),
+});
+export type SellerInfo = z.infer<typeof sellerInfoSchema>;

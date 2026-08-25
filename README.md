@@ -44,6 +44,9 @@ const client = new TraderaClient(); // credentials from env vars
 | `client.auth.beginBankIdOnFile()`                        | `POST /v4/auth/bankid/begin-on-file`                    |
 | `client.auth.getBankIdProgress(orderRef)`                | `GET /v4/auth/bankid/progress`                          |
 | `client.auth.cancelBankId(orderRef)`                     | `POST /v4/auth/bankid/cancel`                           |
+| `client.buyer.buy(request)` †                            | `POST /v4/buyer/buy`                                    |
+| `client.buyer.getTransactions(options?)` †               | `GET /v4/buyer/transactions`                            |
+| `client.buyer.getWishlist(options?)` †                   | `GET /v4/buyer/wishlist`                                |
 | `client.items.getItem(itemId)`                           | `GET /v4/items/{itemId}`                                |
 | `client.items.getItemDescriptions(itemId)`               | `GET /v4/items/{itemId}/descriptions`                   |
 | `client.items.getItemRestarts(itemId)`                   | `GET /v4/items/{itemId}/restarts`                       |
@@ -61,6 +64,9 @@ const client = new TraderaClient(); // credentials from env vars
 | `client.users.getUserByAlias(alias)`                     | `GET /v4/users/by-alias/{alias}`                        |
 | `client.users.getFeedback(userId, options?)`             | `GET /v4/users/{userId}/feedback`                       |
 | `client.users.getFeedbackSummary(userId)`                | `GET /v4/users/{userId}/feedback/summary`               |
+| `client.users.getMe()` †                                 | `GET /v4/users/me`                                      |
+| `client.users.getMyPaymentOptions()` †                   | `GET /v4/users/me/payment-options`                      |
+| `client.users.getSellerInfo(userId)` †                   | `GET /v4/users/{userId}/seller-info`                    |
 | `client.search.search(query, options?)`                  | `GET /v4/search`                                        |
 | `client.search.searchAdvanced(request)`                  | `POST /v4/search/advanced`                              |
 | `client.search.getCategoryCount(request)`                | `POST /v4/search/category-count`                        |
@@ -69,13 +75,13 @@ const client = new TraderaClient(); // credentials from env vars
 
 ### User authorization
 
-Most methods above only need app credentials. The BankID methods additionally require a user token, obtained through Tradera's [token login flow](https://api.tradera.com/documentation): redirect the user to `https://api.tradera.com/token-login?appId=..&pkey=..&skey=..`, then call `client.auth.fetchToken({ userId, secretKey: skey })`. Configure the token on the client:
+Methods marked with † above (and the BankID methods) require a user token, obtained through Tradera's [token login flow](https://api.tradera.com/documentation): redirect the user to `https://api.tradera.com/token-login?appId=..&pkey=..&skey=..`, then call `client.auth.fetchToken({ userId, secretKey: skey })`. Configure the token on the client:
 
 ```ts
 const client = new TraderaClient({ appId, appKey, userId, userToken });
 ```
 
-The BankID endpoints must also be activated for your application by Tradera (apiadmin@tradera.com).
+The BankID endpoints and `client.buyer.buy` must also be activated for your application by Tradera (apiadmin@tradera.com). Note that `buy` places a **binding purchase** — per Tradera's developer terms it must only ever be triggered by an explicit, user-initiated action, never automatically.
 
 ### Errors
 
@@ -107,6 +113,8 @@ npm run build      # compile to lib/
 npm test           # unit tests (no network)
 npm run test:live  # smoke test against the production API; requires TRADERA_APP_ID/TRADERA_APP_KEY
 ```
+
+The live test's user-auth block additionally needs `TRADERA_USER_ID` plus either `TRADERA_USER_TOKEN` or `TRADERA_SKEY` (the skey used when authorizing the app via the token-login URL — the test then fetches the token itself and prints it for reuse). It only calls read-only endpoints; `buyer.buy` is never exercised.
 
 # Contributing
 

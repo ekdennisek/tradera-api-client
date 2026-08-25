@@ -91,7 +91,46 @@ describe("HttpClient", () => {
         const { fetch, requests } = fakeFetch(200, undefined);
         const client = new TraderaClient({ ...credentials, fetch });
         await assert.rejects(client.auth.beginBankId(), /requires user authorization/);
+        await assert.rejects(client.users.getMe(), /requires user authorization/);
+        await assert.rejects(client.buyer.getWishlist(), /requires user authorization/);
         assert.equal(requests.length, 0);
+    });
+
+    it("sends a buy request as POST with body and user headers", async () => {
+        const { fetch, requests } = fakeFetch(200, { nextBid: 0, status: 0 });
+        const client = new TraderaClient({
+            ...credentials,
+            userId: 555,
+            userToken: "user-token",
+            fetch,
+        });
+        const result = await client.buyer.buy({ itemId: 745031047, buyAmount: 250 });
+
+        const request = requests[0]!;
+        assert.equal(request.url.pathname, "/v4/buyer/buy");
+        assert.equal(request.method, "POST");
+        assert.equal(request.headers["X-User-Id"], "555");
+        assert.deepEqual(JSON.parse(request.body!), { itemId: 745031047, buyAmount: 250 });
+        assert.equal(result.status, 0);
+    });
+
+    it("serializes wishlist filter options", async () => {
+        const { fetch, requests } = fakeFetch(200, []);
+        const client = new TraderaClient({
+            ...credentials,
+            userId: 555,
+            userToken: "user-token",
+            fetch,
+        });
+        await client.buyer.getWishlist({
+            filterActive: 1,
+            minEndDate: new Date("2026-08-01T00:00:00Z"),
+        });
+
+        const url = requests[0]!.url;
+        assert.equal(url.pathname, "/v4/buyer/wishlist");
+        assert.equal(url.searchParams.get("filterActive"), "1");
+        assert.equal(url.searchParams.get("minEndDate"), "2026-08-01T00:00:00.000Z");
     });
 
     it("maps error envelopes to TraderaApiError", async () => {

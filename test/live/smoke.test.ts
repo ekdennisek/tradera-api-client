@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { before, describe, it } from "node:test";
 
 import { TraderaClient } from "../../src";
 
@@ -101,5 +101,76 @@ describe(
             const definitions = await client!.categories.getAttributeDefinitions(firstId);
             assert.ok(Array.isArray(definitions));
         });
+
+        // User-auth endpoints additionally need either a user token or the skey from a
+        // completed token-login authorization in the environment:
+        //   TRADERA_USER_ID + TRADERA_USER_TOKEN, or
+        //   TRADERA_USER_ID + TRADERA_SKEY (the skey used in the token-login URL
+        //   https://api.tradera.com/token-login?appId=..&pkey=..&skey=.. — the token is then
+        //   fetched automatically below).
+        // Read-only calls only — buyer.buy places a real, binding purchase and is never
+        // exercised by tests.
+        const userId = Number(process.env["TRADERA_USER_ID"]);
+        const userToken = process.env["TRADERA_USER_TOKEN"];
+        const secretKey = process.env["TRADERA_SKEY"];
+        const hasUserAuth =
+            hasCredentials && Number.isInteger(userId) && Boolean(userToken || secretKey);
+
+        describe(
+            "user-auth endpoints",
+            {
+                skip:
+                    !hasUserAuth && "TRADERA_USER_ID with TRADERA_USER_TOKEN/TRADERA_SKEY not set",
+            },
+            () => {
+                let userClient: TraderaClient | undefined;
+
+                before(async () => {
+                    let token = userToken;
+                    if (!token) {
+                        const fetched = await client!.auth.fetchToken({
+                            userId,
+                            secretKey: secretKey!,
+                        });
+                        assert.ok(
+                            fetched.authToken,
+                            "fetchToken returned no authToken — re-authorize the app via the token-login URL",
+                        );
+                        console.log(
+                            `fetched user token, valid until ${fetched.hardExpirationTime.toISOString()};`,
+                            "set it as TRADERA_USER_TOKEN in .env to skip this fetch:",
+                        );
+                        console.log(fetched.authToken);
+                        token = fetched.authToken;
+                    }
+                    userClient = new TraderaClient({ userId, userToken: token });
+                });
+
+                it("gets the authenticated user's profile", async () => {
+                    const me = await userClient!.users.getMe();
+                    assert.equal(me.id, userId);
+                });
+
+                it("gets the authenticated user's payment options", async () => {
+                    const options = await userClient!.users.getMyPaymentOptions();
+                    assert.ok(Array.isArray(options.paymentOptions ?? []));
+                });
+
+                it("gets seller info for the authenticated user", async () => {
+                    const info = await userClient!.users.getSellerInfo(userId);
+                    assert.equal(typeof info.totalRating, "number");
+                });
+
+                it("gets buyer transactions", async () => {
+                    const transactions = await userClient!.buyer.getTransactions();
+                    assert.ok(Array.isArray(transactions));
+                });
+
+                it("gets the wishlist", async () => {
+                    const wishlist = await userClient!.buyer.getWishlist();
+                    assert.ok(Array.isArray(wishlist));
+                });
+            },
+        );
     },
 );
