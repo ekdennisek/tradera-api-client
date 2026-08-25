@@ -4,7 +4,9 @@ export { TraderaApiError } from "./error";
 
 export type { FetchTokenRequest } from "./resources/auth";
 export type { GetSellerItemsOptions, GetSellerItemsQuickInfoOptions } from "./resources/items";
+export type { GetShippingOptionsOptions } from "./resources/referenceData";
 export type { SearchOptions } from "./resources/search";
+export type { GetFeedbackOptions } from "./resources/users";
 
 export type {
     BankIdVerificationProgress,
@@ -30,6 +32,20 @@ export type {
     ItemStatus,
     RestartedItem,
 } from "./schemas/items";
+export type {
+    IdDescriptionPair,
+    ItemFieldsResponse,
+    ProductsPerWeightSpan,
+    ShippingDeliveryInformation,
+    ShippingEstimatedDeliveryTime,
+    ShippingInsurance,
+    ShippingOptionsResponse,
+    ShippingPackageRequirements,
+    ShippingProduct,
+    ShippingTermsAndConditions,
+} from "./schemas/referenceData";
+export { FeedbackRating, FeedbackRole, GetFeedbackRole } from "./schemas/users";
+export type { Feedback, FeedbackSummary, FeedbackSummaryItem } from "./schemas/users";
 export type {
     AttributeFilter,
     CategoryCountRequest,

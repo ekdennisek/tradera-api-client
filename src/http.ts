@@ -3,7 +3,14 @@ import { ZodType, ZodTypeDef, z } from "zod";
 import { ResolvedConfig } from "./config";
 import { TraderaApiError } from "./error";
 
-export type QueryValue = string | number | boolean | Date | undefined | null;
+export type QueryValue =
+    | string
+    | number
+    | boolean
+    | Date
+    | ReadonlyArray<string | number>
+    | undefined
+    | null;
 export type Query = Record<string, QueryValue>;
 
 interface RequestOptions<T> {
@@ -37,7 +44,14 @@ export class HttpClient {
         const url = new URL(path, this.config.baseUrl);
         for (const [key, value] of Object.entries(options.query ?? {})) {
             if (value === undefined || value === null) continue;
-            url.searchParams.set(key, value instanceof Date ? value.toISOString() : String(value));
+            if (Array.isArray(value)) {
+                for (const element of value) url.searchParams.append(key, String(element));
+            } else {
+                url.searchParams.set(
+                    key,
+                    value instanceof Date ? value.toISOString() : String(value),
+                );
+            }
         }
 
         const headers: Record<string, string> = {

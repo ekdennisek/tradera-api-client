@@ -51,6 +51,16 @@ const client = new TraderaClient(); // credentials from env vars
 | `client.items.getSellerItemsQuickInfo(userId, options?)` | `GET /v4/items/seller/{userId}/quick-info`              |
 | `client.categories.getCategories()`                      | `GET /v4/categories`                                    |
 | `client.categories.getAttributeDefinitions(categoryId)`  | `GET /v4/categories/{categoryId}/attribute-definitions` |
+| `client.referenceData.getOfficialTime()`                 | `GET /v4/reference-data/time`                           |
+| `client.referenceData.getAcceptedBidderTypes()`          | `GET /v4/reference-data/accepted-bidder-types`          |
+| `client.referenceData.getExpoItemTypes()`                | `GET /v4/reference-data/expo-item-types`                |
+| `client.referenceData.getItemTypes()`                    | `GET /v4/reference-data/item-types`                     |
+| `client.referenceData.getCounties()`                     | `GET /v4/reference-data/counties`                       |
+| `client.referenceData.getItemFieldValues()`              | `GET /v4/reference-data/item-field-values`              |
+| `client.referenceData.getShippingOptions(options?)`      | `GET /v4/reference-data/shipping-options`               |
+| `client.users.getUserByAlias(alias)`                     | `GET /v4/users/by-alias/{alias}`                        |
+| `client.users.getFeedback(userId, options?)`             | `GET /v4/users/{userId}/feedback`                       |
+| `client.users.getFeedbackSummary(userId)`                | `GET /v4/users/{userId}/feedback/summary`               |
 | `client.search.search(query, options?)`                  | `GET /v4/search`                                        |
 | `client.search.searchAdvanced(request)`                  | `POST /v4/search/advanced`                              |
 | `client.search.getCategoryCount(request)`                | `POST /v4/search/category-count`                        |

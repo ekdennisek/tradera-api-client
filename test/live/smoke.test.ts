@@ -55,6 +55,46 @@ describe(
             assert.ok(result.items && result.items.length > 0);
         });
 
+        it("gets the official time", async () => {
+            const time = await client!.referenceData.getOfficialTime();
+            // Within an hour of local now — catches both misparsing and a wrong response shape.
+            assert.ok(Math.abs(time.getTime() - Date.now()) < 60 * 60 * 1000);
+        });
+
+        it("gets reference data lists", async () => {
+            const [itemTypes, counties, fieldValues] = await Promise.all([
+                client!.referenceData.getItemTypes(),
+                client!.referenceData.getCounties(),
+                client!.referenceData.getItemFieldValues(),
+            ]);
+            assert.ok(itemTypes.length > 0);
+            assert.ok(itemTypes[0]!.id !== undefined);
+            assert.ok(counties.length > 0);
+            assert.ok((fieldValues.itemAttributes?.length ?? 0) > 0);
+        });
+
+        it("gets shipping options for Sweden", async () => {
+            const options = await client!.referenceData.getShippingOptions({
+                fromCountryCodes: ["SE"],
+            });
+            assert.ok((options.productsPerWeightSpan?.length ?? 0) > 0);
+        });
+
+        it("looks up a user by alias and gets their feedback", async () => {
+            const result = await client!.search.search("vas", { pageNumber: 1 });
+            const searchItem = result.items?.find(item => item.sellerAlias);
+            assert.ok(searchItem?.sellerAlias);
+
+            const user = await client!.users.getUserByAlias(searchItem.sellerAlias);
+            assert.equal(user.id, searchItem.sellerId);
+
+            const summary = await client!.users.getFeedbackSummary(user.id);
+            assert.equal(summary.userId, user.id);
+
+            const feedback = await client!.users.getFeedback(user.id, { maxNumberOfItems: 5 });
+            assert.ok(Array.isArray(feedback));
+        });
+
         it("gets attribute definitions for a category", async () => {
             const categories = await client!.categories.getCategories();
             const firstId = categories[0]!.id;

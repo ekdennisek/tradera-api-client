@@ -40,6 +40,27 @@ describe("HttpClient", () => {
         assert.equal(url.searchParams.has("filterActive"), false);
     });
 
+    it("serializes array query parameters as repeated keys", async () => {
+        const { fetch, requests } = fakeFetch(200, { productsPerWeightSpan: [] });
+        const client = new TraderaClient({ ...credentials, fetch });
+        await client.referenceData.getShippingOptions({
+            fromCountryCodes: ["SE", "DE"],
+            categoryIds: [1, 2],
+        });
+
+        const url = requests[0]!.url;
+        assert.deepEqual(url.searchParams.getAll("fromCountryCodes"), ["SE", "DE"]);
+        assert.deepEqual(url.searchParams.getAll("categoryIds"), ["1", "2"]);
+    });
+
+    it("URI-encodes path parameters built from user input", async () => {
+        const { fetch, requests } = fakeFetch(200, { id: 1, alias: "KyrkornasSecondhand-Täby" });
+        const client = new TraderaClient({ ...credentials, fetch });
+        await client.users.getUserByAlias("KyrkornasSecondhand-Täby");
+
+        assert.equal(requests[0]!.url.pathname, "/v4/users/by-alias/KyrkornasSecondhand-T%C3%A4by");
+    });
+
     it("sends JSON bodies with Content-Type on POST", async () => {
         const { fetch, requests } = fakeFetch(200, { totalNumberOfItems: 0, items: [] });
         const client = new TraderaClient({ ...credentials, fetch });

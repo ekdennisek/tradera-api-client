@@ -4,7 +4,9 @@ import { describe, it } from "node:test";
 import { categorySchema } from "../src/schemas/categories";
 import { parseTraderaDate } from "../src/schemas/common";
 import { itemSchema } from "../src/schemas/items";
+import { officialTimeSchema } from "../src/schemas/referenceData";
 import { searchResultSchema } from "../src/schemas/search";
+import { feedbackSchema } from "../src/schemas/users";
 import itemFixture from "./fixtures/item.json";
 
 describe("schemas", () => {
@@ -58,6 +60,25 @@ describe("schemas", () => {
             parseTraderaDate("2026-08-25T09:42:56.320Z").toISOString(),
             "2026-08-25T09:42:56.320Z",
         );
+    });
+
+    it("parses the official time in both documented response shapes", () => {
+        const fromString = officialTimeSchema.parse("2026-03-17T14:30:00Z");
+        assert.equal(fromString.toISOString(), "2026-03-17T14:30:00.000Z");
+        const fromObject = officialTimeSchema.parse({ time: "2026-03-17T14:30:00Z" });
+        assert.equal(fromObject.toISOString(), "2026-03-17T14:30:00.000Z");
+    });
+
+    it("parses feedback with date coercion", () => {
+        const feedback = feedbackSchema.parse({
+            feedbackRole: 0,
+            feedbackRating: 3,
+            alias: "someone",
+            comment: "Snabb leverans!",
+            created: "2026-08-01T10:00:00",
+            totalRating: 42,
+        });
+        assert.equal(feedback.created.toISOString(), "2026-08-01T08:00:00.000Z");
     });
 
     it("parses a search result with nullable numeric fields", () => {
