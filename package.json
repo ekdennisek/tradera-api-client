@@ -32,7 +32,10 @@
     },
     "scripts": {
         "build": "tsc",
+        "clean": "rm -rf lib",
+        "prepublishOnly": "npm run prettier:check && npm test && npm run clean && npm run build",
         "prettier": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+        "prettier:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
         "test": "node --import tsx --test test/*.test.ts",
         "test:live": "node --import tsx --test test/live/*.test.ts"
     },
